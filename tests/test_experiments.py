@@ -2,7 +2,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from routing_project.experiments import CSV_FIELDS, ExperimentConfig, run_experiment, run_parameter_sweep
+from routing_project.experiments import (
+    CSV_FIELDS,
+    ExperimentConfig,
+    format_result_summary,
+    run_experiment,
+    run_parameter_sweep,
+)
 
 
 class ExperimentTests(unittest.TestCase):
@@ -32,6 +38,17 @@ class ExperimentTests(unittest.TestCase):
 
             self.assertTrue(output.exists())
             self.assertEqual(len(rows), 27)
+
+    def test_result_summary_mentions_fastest_and_benchmark(self):
+        rows = [
+            {"algorithm": "dijkstra", "graph_id": "g1", "runtime_ms": 2.0, "path_cost": 10, "success": True},
+            {"algorithm": "harmony_search", "graph_id": "g1", "runtime_ms": 5.0, "path_cost": 12, "success": True},
+        ]
+
+        summary = format_result_summary(rows)
+
+        self.assertIn("Fastest average runtime: dijkstra", summary)
+        self.assertIn("Dijkstra is the exact benchmark", summary)
 
 
 if __name__ == "__main__":

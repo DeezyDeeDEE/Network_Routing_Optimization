@@ -6,7 +6,13 @@ import argparse
 from pathlib import Path
 
 from routing_project.charts import make_charts
-from routing_project.experiments import CHECKPOINT_CONFIG, SMALL_CONFIG, run_experiment, run_parameter_sweep
+from routing_project.experiments import (
+    CHECKPOINT_CONFIG,
+    SMALL_CONFIG,
+    format_result_summary,
+    run_experiment,
+    run_parameter_sweep,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -39,9 +45,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "run-small":
         rows = run_experiment(SMALL_CONFIG, args.output)
         print(f"Wrote {len(rows)} rows to {args.output}")
+        print(format_result_summary(rows))
     elif args.command == "run-checkpoint":
         rows = run_experiment(CHECKPOINT_CONFIG, args.output)
         print(f"Wrote {len(rows)} rows to {args.output}")
+        print(format_result_summary(rows))
     elif args.command == "run-sweep":
         rows = run_parameter_sweep(
             args.output,
@@ -51,6 +59,7 @@ def main(argv: list[str] | None = None) -> int:
             progress=True,
         )
         print(f"Wrote {len(rows)} rows to {args.output}")
+        print(format_result_summary(rows))
     elif args.command == "make-charts":
         outputs = make_charts(args.input, args.output_dir)
         for output in outputs:

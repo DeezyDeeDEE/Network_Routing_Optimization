@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import os
 from collections import defaultdict
 from pathlib import Path
 from statistics import mean
@@ -28,6 +29,7 @@ def make_charts(input_csv: Path, output_dir: Path) -> list[Path]:
     hs_error = _hs_error_by_graph(rows)
     if hs_error:
         outputs.append(_bar_chart(hs_error, "Harmony Search Error vs Dijkstra", "Cost difference", output_dir / "hs_error.svg"))
+    outputs.append(_summary_report(rows, input_csv, output_dir, outputs))
     return outputs
 
 
@@ -60,6 +62,84 @@ def _hs_error_by_graph(rows: list[dict[str, str]]) -> dict[str, float]:
         if graph_id in dijkstra_cost:
             errors.append(mean(costs) - dijkstra_cost[graph_id])
     return {"HS mean error": mean(errors)} if errors else {}
+
+
+def _summary_report(rows: list[dict[str, str]], input_csv: Path, output_dir: Path, chart_paths: list[Path]) -> Path:
+    summary = _summary_table(rows)
+    fastest = min(summary, key=lambda algorithm: summary[algorithm]["runtime_ms"]) if summary else ""
+    lowest_cost = min(summary, key=lambda algorithm: summary[algorithm]["path_cost"]) if summary else ""
+    hs_error = _hs_error_by_graph(rows).get("HS mean error")
+    graph_count = len({row["graph_id"] for row in rows})
+    output_path = output_dir / "results_summary.md"
+    source_label = os.path.relpath(input_csv, start=output_dir)
+
+    lines = [
+        "# Experiment Results Summary",
+        "",
+        f"Source CSV: `{source_label}`",
+        "",
+        "## Visuals",
+        "",
+    ]
+    for chart_path in chart_paths:
+        label = chart_path.stem.replace("_", " ").title()
+        lines.append(f"![{label}]({chart_path.name})")
+        lines.append("")
+
+    lines.extend(
+        [
+            "## Algorithm Averages",
+            "",
+            "| Algorithm | Mean runtime (ms) | Mean path cost | Success rate |",
+            "| --- | ---: | ---: | ---: |",
+        ]
+    )
+    for algorithm, values in summary.items():
+        lines.append(
+            f"| {algorithm} | {values['runtime_ms']:.3f} | {values['path_cost']:.3f} | {values['success_rate']:.1%} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Interpretation",
+            "",
+            f"- The data includes {len(rows)} runs across {graph_count} graph instance(s).",
+        ]
+    )
+    if fastest:
+        lines.append(f"- `{fastest}` had the fastest average runtime in this run.")
+    if lowest_cost:
+        lines.append(f"- `{lowest_cost}` had the lowest average path cost.")
+    if hs_error is not None:
+        lines.append(f"- Harmony Search averaged {hs_error:.3f} cost units above Dijkstra on matching graph instances.")
+    lines.extend(
+        [
+            "- Dijkstra is the exact benchmark, so it anchors the path-quality comparison.",
+            "- Bellman-Ford is expected to be slower because it checks the graph more broadly.",
+            "- A* uses a zero heuristic for random weighted graphs, so it should behave similarly to Dijkstra in this experiment.",
+            "- Harmony Search is approximate; the important question is whether its path cost is close enough to Dijkstra to justify its runtime.",
+        ]
+    )
+
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return output_path
+
+
+def _summary_table(rows: list[dict[str, str]]) -> dict[str, dict[str, float]]:
+    runtime = _mean_by_algorithm(rows, "runtime_ms")
+    cost = _mean_by_algorithm(rows, "path_cost")
+    success: dict[str, list[bool]] = defaultdict(list)
+    for row in rows:
+        success[row["algorithm"]].append(row.get("success") == "True")
+    return {
+        algorithm: {
+            "runtime_ms": runtime.get(algorithm, 0.0),
+            "path_cost": cost.get(algorithm, 0.0),
+            "success_rate": sum(success[algorithm]) / len(success[algorithm]),
+        }
+        for algorithm in runtime
+    }
 
 
 def _bar_chart(values: dict[str, float], title: str, y_label: str, output_path: Path) -> Path:

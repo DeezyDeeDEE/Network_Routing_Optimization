@@ -85,6 +85,10 @@ Generate charts from the small run:
 python -m routing_project.cli make-charts
 ```
 
+This writes SVG chart files and `results/charts/results_summary.md`, which
+summarizes the fastest algorithm, lowest path-cost algorithm, Harmony Search's
+average gap from Dijkstra, and the main interpretation points for the report.
+
 ## Result Files
 
 CSV outputs use these fields:

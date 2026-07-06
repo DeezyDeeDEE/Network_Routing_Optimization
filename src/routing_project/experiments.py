@@ -184,6 +184,59 @@ def summarize_by_algorithm(rows: Iterable[dict[str, object]]) -> dict[str, dict[
     return summary
 
 
+def format_result_summary(rows: Iterable[dict[str, object]]) -> str:
+    """Build a short human-readable interpretation of experiment rows."""
+
+    row_list = list(rows)
+    summary = summarize_by_algorithm(row_list)
+    if not row_list or not summary:
+        return "No result rows were available to summarize."
+
+    fastest = min(summary, key=lambda algorithm: summary[algorithm]["mean_runtime_ms"])
+    lowest_cost = min(summary, key=lambda algorithm: summary[algorithm]["mean_path_cost"])
+    graph_count = len({str(row["graph_id"]) for row in row_list})
+    hs_error = _mean_harmony_error(row_list)
+
+    lines = [
+        "",
+        "Result perspective:",
+        f"- Compared {len(summary)} algorithms across {graph_count} graph instance(s) and {len(row_list)} total runs.",
+        f"- Fastest average runtime: {fastest} ({summary[fastest]['mean_runtime_ms']:.3f} ms).",
+        f"- Lowest average path cost: {lowest_cost} ({summary[lowest_cost]['mean_path_cost']:.3f}).",
+    ]
+    if hs_error is not None:
+        lines.append(f"- Harmony Search averaged {hs_error:.3f} cost units above Dijkstra on matching graphs.")
+    lines.extend(
+        [
+            "- Dijkstra is the exact benchmark; matching its path cost means an algorithm found an optimal route.",
+            "- Harmony Search is approximate, so its value is judged by how close it gets to Dijkstra and how much runtime it needs.",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _mean_harmony_error(rows: list[dict[str, object]]) -> float | None:
+    dijkstra_cost: dict[str, float] = {}
+    harmony_costs: dict[str, list[float]] = {}
+    for row in rows:
+        path_cost = row.get("path_cost")
+        if path_cost in ("", None):
+            continue
+        graph_id = str(row["graph_id"])
+        algorithm = str(row["algorithm"])
+        cost = float(path_cost)
+        if algorithm == "dijkstra":
+            dijkstra_cost.setdefault(graph_id, cost)
+        elif algorithm == "harmony_search":
+            harmony_costs.setdefault(graph_id, []).append(cost)
+
+    errors = []
+    for graph_id, costs in harmony_costs.items():
+        if graph_id in dijkstra_cost:
+            errors.extend(cost - dijkstra_cost[graph_id] for cost in costs)
+    return mean(errors) if errors else None
+
+
 def _run_graph_trials(
     graph: WeightedGraph,
     graph_id: str,
