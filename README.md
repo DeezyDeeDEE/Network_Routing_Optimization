@@ -12,8 +12,7 @@ a nature-inspired metaheuristic.
 - Derek Nelson
 - Alan Tate
 
-Add GitHub profile links to the names above before submitting if the instructor
-expects clickable contributor names.
+
 
 ## Repository Structure
 
@@ -102,5 +101,3 @@ Implemented and tested:
 - Harmony Search with configurable `HMCR`, `PAR`, `HMS`, iteration count, and seed.
 - CSV result generation and dependency-free SVG chart generation.
 
-The second checkpoint can submit this repository link plus the intermediate
-report in `reports/second_checkpoint_report.md`.
