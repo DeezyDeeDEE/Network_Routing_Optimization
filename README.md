@@ -12,8 +12,7 @@ a nature-inspired metaheuristic.
 - Derek Nelson
 - Alan Tate
 
-Add GitHub profile links to the names above before submitting if the instructor
-expects clickable contributor names.
+
 
 ## Repository Structure
 
