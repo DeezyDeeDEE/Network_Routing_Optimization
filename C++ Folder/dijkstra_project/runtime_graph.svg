@@ -1,0 +1,17 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='760' height='430'>
+<rect width='100%' height='100%' fill='white'/>
+<text x='30' y='32' font-family='Arial' font-size='22' font-weight='bold'>Dijkstra Runtime Results</text>
+<text x='30' y='55' font-family='Arial' font-size='13'>Stanford SNAP as-Skitter dataset</text>
+<text x='30' y='131' font-family='Arial' font-size='15'>Graph load</text>
+<rect x='170' y='100' width='292' height='48' rx='6' ry='6' fill='#4f81bd'/>
+<text x='472' y='131' font-family='Arial' font-size='14'>9.9081 sec</text>
+<text x='30' y='214' font-family='Arial' font-size='15'>Dijkstra</text>
+<rect x='170' y='183' width='207' height='48' rx='6' ry='6' fill='#4f81bd'/>
+<text x='387' y='214' font-family='Arial' font-size='14'>7.0354 sec</text>
+<text x='30' y='297' font-family='Arial' font-size='15'>Total runtime</text>
+<rect x='170' y='266' width='500' height='48' rx='6' ry='6' fill='#4f81bd'/>
+<text x='680' y='297' font-family='Arial' font-size='14'>16.9446 sec</text>
+<line x1='170' y1='350' x2='670' y2='350' stroke='black'/>
+<text x='170' y='380' font-family='Arial' font-size='13'>0 sec</text>
+<text x='600' y='380' font-family='Arial' font-size='13'>16.94 sec</text>
+</svg>
