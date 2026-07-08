@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="380.0" y="32" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">Harmony Search Error vs Dijkstra</text>
+<text x="24" y="220.0" transform="rotate(-90 24 220.0)" text-anchor="middle" font-family="Arial" font-size="13">Cost difference</text>
+<line x1="90" y1="60" x2="90" y2="360" stroke="#444"/>
+<line x1="90" y1="360" x2="720" y2="360" stroke="#444"/>
+<rect x="114.0" y="60.0" width="582.0" height="300.0" fill="#2f6f8f"/>
+<text x="405.0" y="52.0" text-anchor="middle" font-family="Arial" font-size="12">3.58</text>
+<text x="405.0" y="382" text-anchor="middle" font-family="Arial" font-size="12">HS mean error</text>
+</svg>
