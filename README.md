@@ -21,6 +21,9 @@ be comparing the efficiency between C++ algorithms and Python algorithms as well
 # How To Run Code For Each Implementation
 ## Derek Implementation
 ### Setup
+- Navigate to `/Python Folder/Derek Code/`
+
+Run code for setup
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -59,7 +62,7 @@ Harmony Search parameter sweep:
 python -m routing_project.cli run-sweep
 ```
 
-The default sweep tests all HMCR/PAR/HMS combinations at 500 nodes with 3
+- The default sweep tests all HMCR/PAR/HMS combinations at 500 nodes with 3
 trials and 100 iterations per trial. For a larger final-analysis run:
 
 ```powershell
@@ -72,7 +75,7 @@ Larger checkpoint grid:
 python -m routing_project.cli run-checkpoint
 ```
 
-Generate charts from the small run:
+- Generate charts from the small run:
 
 ```powershell
 python -m routing_project.cli make-charts
@@ -84,7 +87,7 @@ average gap from Dijkstra, and the main interpretation points for the report.
 
 ### Result Files
 
-CSV outputs use these fields:
+- CSV outputs use these fields:
 
 `algorithm`, `graph_id`, `nodes`, `edges`, `density`, `source`, `target`,
 `path_cost`, `runtime_ms`, `success`, `seed`, `hmcr`, `par`, `hms`,
@@ -95,6 +98,7 @@ cost difference relative to Dijkstra. These files can be inserted into the final
 report or presentation.
 
 ## Aaron Implementation
+- Navigate to `/Python Folder/Aaron Files/`
 To run, simply input the following
 ```powershell
 ./mainscript.sh
@@ -106,7 +110,9 @@ To put the results in a file and graph them, input the following
 python3 graph.py
 ```
 ## Alan Implementation
+- Navigate to `/C++ Folder/`
 ### Dijkstra's Algorithm
+- Navigate to `/C++ Folder/dijkstra_project/`
 The file must be unzipped first. Use `as-skitter.txt`, not `as-skitter.txt.gz`.
 
 #### Compile in VS Code terminal
@@ -150,6 +156,7 @@ The program creates:
 - `path_length_graph.svg`
 
 ### A* Search Algorithm
+- Navigate to `/C++ Folder/A search/
 
 Compile:
 ```powershell
@@ -164,6 +171,7 @@ Run:
 This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
 
 ### Bellman-Ford Algorithm
+- Navigate to `/C++ Folder/bellman_ford/`
 Compile:
 ```powershell
 g++ main.cpp -o bellman_ford -std=c++17 -O2
@@ -177,6 +185,7 @@ Run:
 This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
 
 ### Harmony Search
+- Navigate to `/C++ Folder/Harmoncy search/
 Compile:
 ```powershell
 g++ main.cpp -o harmony_search -std=c++17 -O2
