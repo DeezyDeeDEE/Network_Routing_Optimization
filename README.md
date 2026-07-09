@@ -1,1 +1,98 @@
-# CSC_2400_Team3_Project
+# CSC_2400_Team3_Network_Routing_Optimization
+The purpose of this project is compare algorithms on weighted graphs with 4 different algorithms.
+This project will use Dijkstra's, Bellman Ford, A*, and Harmoncy search as the comparisons. We will also
+be comparing the efficiency between C++ algorithms and Python algorithms as well.
+
+## Team
+- Spencer- Organizer
+- Aaron- Python Collaborator
+- Derek- Python Collaborator
+- Tate- C++ Collaborator
+
+## Structure
+- `/Python Folder/Aaron Files/`: Code from Aaron and his graphs, results, and his implementation of the algorithm's
+- `/Python Folder/Derek Code/`: Code from Derek and his graphs, results, tests, and algorithm implementations
+- `/C++ Folder/`: Contains seperate folders for Alan's algorithms
+- `/C++ Folder/A search/`: Contains files from A search implementation including code, graphs, reports, and tests
+- `/C++ Folder/Harmoncy search/`:Contains Harmony search implementation files including code, graphs, reports, and tests
+- `/C++ Folder/bellman_ford/`: Contains Bellman-Ford implementation files including code, graphs, reports, and tests
+- `/C++ Folder/dijkstra_project/`: Contains Dijkstra'simplementation files including code, graphs, reports, and tests
+
+# How To Run Code For Each Implementation
+## Derek Implementation
+### Setup
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e .
+python -m pip install -r requirements-dev.txt
+```
+
+If you have not created a python environment, run the commands with `PYTHONPATH=src`.
+On PowerShell:
+```powershell
+$env:PYTHONPATH = "src"
+```
+Preferred:
+
+```powershell
+python -m pytest
+```
+
+Fallback using only the Python standard library:
+
+```powershell
+python -m unittest discover
+```
+
+### Run Experiments
+
+Quick checkpoint run:
+
+```powershell
+python -m routing_project.cli run-small
+```
+
+Harmony Search parameter sweep:
+
+```powershell
+python -m routing_project.cli run-sweep
+```
+
+The default sweep tests all HMCR/PAR/HMS combinations at 500 nodes with 3
+trials and 100 iterations per trial. For a larger final-analysis run:
+
+```powershell
+python -m routing_project.cli run-sweep --trials 10 --iterations 250
+```
+
+Larger checkpoint grid:
+
+```powershell
+python -m routing_project.cli run-checkpoint
+```
+
+Generate charts from the small run:
+
+```powershell
+python -m routing_project.cli make-charts
+```
+
+This writes SVG chart files and `results/charts/results_summary.md`, which
+summarizes the fastest algorithm, lowest path-cost algorithm, Harmony Search's
+average gap from Dijkstra, and the main interpretation points for the report.
+
+### Result Files
+
+CSV outputs use these fields:
+
+`algorithm`, `graph_id`, `nodes`, `edges`, `density`, `source`, `target`,
+`path_cost`, `runtime_ms`, `success`, `seed`, `hmcr`, `par`, `hms`,
+`iterations`.
+
+The SVG chart outputs summarize mean runtime, mean path cost, and Harmony Search
+cost difference relative to Dijkstra. These files can be inserted into the final
+report or presentation.
+
+
+
