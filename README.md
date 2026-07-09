@@ -94,5 +94,99 @@ The SVG chart outputs summarize mean runtime, mean path cost, and Harmony Search
 cost difference relative to Dijkstra. These files can be inserted into the final
 report or presentation.
 
+## Aaron Implementation
+To run, simply input the following
+```powershell
+./mainscript.sh
+```
+To put the results in a file and graph them, input the following
+```powershell
+./mainscript.sh
+./mainscript.sh > results.csv
+python3 graph.py
+```
+## Alan Implementation
+### Dijkstra's Algorithm
+The file must be unzipped first. Use `as-skitter.txt`, not `as-skitter.txt.gz`.
 
+#### Compile in VS Code terminal
 
+```powershell
+g++ main.cpp -o dijkstra -std=c++17
+```
+
+Or use Make:
+
+```powershell
+make
+```
+
+#### Run a smaller test
+
+```powershell
+.\dijkstra.exe as-skitter.txt 0 100000
+```
+
+#### Run the full dataset
+
+```powershell
+.\dijkstra.exe as-skitter.txt 0 0
+```
+
+#### Optional target node
+
+By default, the program finds the path from the source node to the largest node ID loaded. You can also provide a target node manually:
+
+```powershell
+.\dijkstra.exe as-skitter.txt 0 0 1696415
+```
+
+#### Output files
+
+The program creates:
+
+- `results.csv`
+- `runtime_graph.svg`
+- `path_length_graph.svg`
+
+### A* Search Algorithm
+
+Compile:
+```powershell
+g++ main.cpp -o astar -std=c++17 -O2
+```
+
+Run:
+```powershell
+.\astar.exe as-skitter.txt 0 0
+```
+
+This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
+
+### Bellman-Ford Algorithm
+Compile:
+```powershell
+g++ main.cpp -o bellman_ford -std=c++17 -O2
+```
+
+Run:
+```powershell
+.\bellman_ford.exe as-skitter.txt 0 10000
+```
+
+This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
+
+### Harmony Search
+Compile:
+```powershell
+g++ main.cpp -o harmony_search -std=c++17 -O2
+```
+
+Run:
+```powershell
+.\harmony_search.exe as-skitter.txt 0 100000 5000 50
+```
+
+Arguments: dataset source maxEdges iterations harmonyMemorySize.
+
+This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
