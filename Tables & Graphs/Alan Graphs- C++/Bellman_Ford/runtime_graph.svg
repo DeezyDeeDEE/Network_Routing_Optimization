@@ -1,0 +1,7 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='800' height='300'>
+<rect width='100%' height='100%' fill='white'/>
+<text x='30' y='40' font-size='24' font-family='Arial'>Bellman-Ford Runtime</text>
+<text x='30' y='100' font-size='18' font-family='Arial'>Algorithm time</text>
+<rect x='200' y='75' width='30' height='50' fill='steelblue'/>
+<text x='240' y='108' font-size='16' font-family='Arial'>0.0615 seconds</text>
+</svg>
