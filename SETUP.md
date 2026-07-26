@@ -38,8 +38,8 @@ You need `3.10.0` or higher. If `python` is not found, see
 Three commands:
 
 ```powershell
-git clone -b derek_branch https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
-cd CSC_2400_Team3_Project
+git clone -b derek_branch https://github.com/DeezyDeeDEE/Network_Routing_Optimization.git
+cd Network_Routing_Optimization
 $env:PYTHONPATH = "src"; python -m routing_project.cli gui
 ```
 
@@ -64,8 +64,8 @@ PYTHONPATH=src python3 -m routing_project.cli gui
 **With Git:**
 
 ```powershell
-git clone -b derek_branch https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
-cd CSC_2400_Team3_Project
+git clone -b derek_branch https://github.com/DeezyDeeDEE/Network_Routing_Optimization.git
+cd Network_Routing_Optimization
 ```
 
 The `-b derek_branch` flag is required — the default `main` branch has a

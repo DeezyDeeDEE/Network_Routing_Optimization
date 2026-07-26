@@ -12,8 +12,8 @@ a nature-inspired metaheuristic.
 > working demo — no install, no dependencies:
 >
 > ```powershell
-> git clone -b derek_branch https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
-> cd CSC_2400_Team3_Project
+> git clone -b derek_branch https://github.com/DeezyDeeDEE/Network_Routing_Optimization.git
+> cd Network_Routing_Optimization
 > $env:PYTHONPATH = "src"; python -m routing_project.cli gui
 > ```
 
