@@ -35,13 +35,18 @@ You need `3.10.0` or higher. If `python` is not found, see
 
 ## 2. Quick start
 
-Three commands from the repository root:
+Three commands:
 
 ```powershell
-git clone https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
+git clone -b derek_branch https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
 cd CSC_2400_Team3_Project
 $env:PYTHONPATH = "src"; python -m routing_project.cli gui
 ```
+
+> **The `-b derek_branch` matters.** The repository's default branch (`main`)
+> holds a different folder layout and does **not** contain the Python package,
+> so a plain `git clone` will not work. Everything described in this guide lives
+> on `derek_branch`.
 
 Your browser opens at <http://127.0.0.1:8000>. Pick **Quick check** and press
 **Run experiment** — it finishes in well under a second.
@@ -59,12 +64,21 @@ PYTHONPATH=src python3 -m routing_project.cli gui
 **With Git:**
 
 ```powershell
-git clone https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
+git clone -b derek_branch https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
 cd CSC_2400_Team3_Project
 ```
 
-**Without Git:** download the ZIP from the GitHub page ("Code" → "Download ZIP"),
-extract it, and `cd` into the extracted folder.
+The `-b derek_branch` flag is required — the default `main` branch has a
+different structure and does not contain the Python package. If you already
+cloned without it:
+
+```powershell
+git checkout derek_branch
+```
+
+**Without Git:** on the GitHub page, switch the branch selector from `main` to
+`derek_branch` **first**, then use "Code" → "Download ZIP". Extract it and `cd`
+into the extracted folder.
 
 Every command below is run **from the repository root** — the folder containing
 `README.md`, `pyproject.toml`, `src/`, and `tests/`.
@@ -268,6 +282,13 @@ tick **"Add python.exe to PATH"** during installation.
 The path step didn't apply. Check that you are in the repository root (`ls`
 should show `src` and `pyproject.toml`), then redo step 4. Remember
 `$env:PYTHONPATH` only lasts for the current terminal window.
+
+**`invalid choice: 'gui'`, or there is no `src/` folder at all**
+You are on the wrong branch. `ls` will show `Code`, `Reports`, and
+`Tables & Graphs` instead of `src` and `tests`. Fix it with:
+```powershell
+git checkout derek_branch
+```
 
 **`OSError: [Errno 98] Address already in use` / `[WinError 10048]`**
 Port 8000 is taken. Let the OS choose one:

@@ -8,9 +8,12 @@ a nature-inspired metaheuristic.
 > **New here? Read [SETUP.md](SETUP.md)** for a full install-and-run walkthrough,
 > including every requirement and a troubleshooting section.
 >
-> Fastest path to a working demo — no install, no dependencies:
+> This code lives on the `derek_branch` branch, not `main`. Fastest path to a
+> working demo — no install, no dependencies:
 >
 > ```powershell
+> git clone -b derek_branch https://github.com/DeezyDeeDEE/CSC_2400_Team3_Project.git
+> cd CSC_2400_Team3_Project
 > $env:PYTHONPATH = "src"; python -m routing_project.cli gui
 > ```
 
