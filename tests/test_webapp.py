@@ -6,10 +6,13 @@ same way a browser exercises them.
 """
 
 import json
+import shutil
+import tempfile
 import threading
 import unittest
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 from routing_project import webapp
 
@@ -52,6 +55,15 @@ def read_events(base: str, run_id: str, timeout: float = 120.0):
 class WebAppTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Redirect every output path into a temp directory. Without this the
+        # server writes CSVs, environment.json, and charts straight into the
+        # working tree, which pollutes the repository on every test run.
+        cls.temp_dir = Path(tempfile.mkdtemp(prefix="routing-webapp-test-"))
+        cls._saved_paths = (webapp.RAW_DIR, webapp.GUI_CHART_DIR, webapp.DATA_DIR)
+        webapp.RAW_DIR = cls.temp_dir / "raw"
+        webapp.GUI_CHART_DIR = cls.temp_dir / "charts"
+        webapp.DATA_DIR = cls.temp_dir / "data"
+
         cls.server = webapp.create_server("127.0.0.1", 0)
         cls.base = f"http://127.0.0.1:{cls.server.server_address[1]}"
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
@@ -61,6 +73,38 @@ class WebAppTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.server.shutdown()
         cls.server.server_close()
+        webapp.RAW_DIR, webapp.GUI_CHART_DIR, webapp.DATA_DIR = cls._saved_paths
+        shutil.rmtree(cls.temp_dir, ignore_errors=True)
+
+    def test_runs_do_not_write_into_the_repository(self):
+        """Output paths must be redirectable so tests never touch the repo."""
+
+        self.assertEqual(webapp.RAW_DIR.parent, self.temp_dir)
+        self.assertEqual(webapp.GUI_CHART_DIR.parent, self.temp_dir)
+
+        status, data = post_json(
+            self.base,
+            "/api/run",
+            {
+                "mode": "custom",
+                "options": {
+                    "node_counts": "8",
+                    "densities": ["sparse"],
+                    "graph_seeds": "3",
+                    "repeats": 1,
+                    "trials": 1,
+                    "iterations": 2,
+                    "hms": 3,
+                    "measure_memory": False,
+                },
+            },
+        )
+        self.assertEqual(status, 200)
+        read_events(self.base, data["run_id"])
+
+        self.assertTrue((webapp.RAW_DIR / "gui_custom.csv").exists())
+        repo_results = Path(webapp.__file__).resolve().parents[2] / "results" / "raw" / "gui_custom.csv"
+        self.assertFalse(repo_results.exists(), "run output leaked into the repository")
 
     def test_index_page_is_served(self):
         with urllib.request.urlopen(self.base + "/", timeout=10) as response:
