@@ -68,6 +68,23 @@ Fallback using only the Python standard library:
 python -m unittest discover
 ```
 
+## Analysis Notebook
+
+`analysis.ipynb` walks through the whole study in 19 documented code cells:
+each algorithm in turn, the scaling experiment, the real SNAP networks, memory
+and basic-operation counts, and the Harmony Search parameter sweep. It is
+committed **with all outputs saved**, so GitHub renders the tables and the six
+figures without anyone running it.
+
+```powershell
+python -m pip install -r requirements-dev.txt
+jupyter notebook analysis.ipynb
+```
+
+Runtime is about two minutes end to end. It imports the same `routing_project`
+library the CLI uses, so nothing in it is reimplemented, and its real-data
+numbers reproduce the committed charts in `results/charts/real/`.
+
 ## Interactive GUI
 
 The fastest way to see the project work is the built-in web GUI:
