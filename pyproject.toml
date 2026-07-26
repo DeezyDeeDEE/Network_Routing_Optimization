@@ -19,3 +19,6 @@ routing-project = "routing_project.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+routing_project = ["static/*.html"]

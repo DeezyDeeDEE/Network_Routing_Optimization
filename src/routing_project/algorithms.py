@@ -44,11 +44,12 @@ def dijkstra(graph: WeightedGraph, source: int, target: int) -> AlgorithmResult:
     if not graph.has_node(source) or not graph.has_node(target):
         return AlgorithmResult("dijkstra", [], math.inf, _elapsed_ms(start), False, {"error": "missing node"})
 
-    distances = {node: math.inf for node in graph.nodes()}
+    distances = {node: math.inf for node in graph.iter_nodes()}
     previous: dict[int, int] = {}
     distances[source] = 0.0
     queue: list[tuple[float, int]] = [(0.0, source)]
     expanded = 0
+    edge_examinations = 0
 
     while queue:
         current_distance, node = heapq.heappop(queue)
@@ -58,6 +59,7 @@ def dijkstra(graph: WeightedGraph, source: int, target: int) -> AlgorithmResult:
         if node == target:
             break
         for edge in graph.neighbors(node):
+            edge_examinations += 1
             candidate = current_distance + edge.weight
             if candidate < distances[edge.to]:
                 distances[edge.to] = candidate
@@ -71,7 +73,7 @@ def dijkstra(graph: WeightedGraph, source: int, target: int) -> AlgorithmResult:
         distances[target],
         _elapsed_ms(start),
         bool(path),
-        {"expanded_nodes": expanded},
+        {"expanded_nodes": expanded, "edge_examinations": edge_examinations},
     )
 
 
@@ -80,20 +82,22 @@ def bellman_ford(graph: WeightedGraph, source: int, target: int) -> AlgorithmRes
     if not graph.has_node(source) or not graph.has_node(target):
         return AlgorithmResult("bellman_ford", [], math.inf, _elapsed_ms(start), False, {"error": "missing node"})
 
-    nodes = graph.nodes()
-    distances = {node: math.inf for node in nodes}
+    node_total = graph.node_count()
+    distances = {node: math.inf for node in graph.iter_nodes()}
     previous: dict[int, int] = {}
     distances[source] = 0.0
     edges = graph.edges()
     relaxations = 0
+    edge_examinations = 0
 
-    for _ in range(len(nodes) - 1):
+    for _ in range(node_total - 1):
         changed = False
         for source_node, target_node, weight in edges:
             pairs = [(source_node, target_node, weight)]
             if not graph.directed:
                 pairs.append((target_node, source_node, weight))
             for left, right, edge_weight in pairs:
+                edge_examinations += 1
                 if distances[left] + edge_weight < distances[right]:
                     distances[right] = distances[left] + edge_weight
                     previous[right] = left
@@ -114,7 +118,11 @@ def bellman_ford(graph: WeightedGraph, source: int, target: int) -> AlgorithmRes
                     -math.inf,
                     _elapsed_ms(start),
                     False,
-                    {"negative_cycle": True, "relaxations": relaxations},
+                    {
+                        "negative_cycle": True,
+                        "relaxations": relaxations,
+                        "edge_examinations": edge_examinations,
+                    },
                 )
 
     path = _reconstruct_path(previous, source, target)
@@ -124,7 +132,11 @@ def bellman_ford(graph: WeightedGraph, source: int, target: int) -> AlgorithmRes
         distances[target],
         _elapsed_ms(start),
         bool(path),
-        {"negative_cycle": False, "relaxations": relaxations},
+        {
+            "negative_cycle": False,
+            "relaxations": relaxations,
+            "edge_examinations": edge_examinations,
+        },
     )
 
 
@@ -139,11 +151,12 @@ def astar(
         return AlgorithmResult("astar", [], math.inf, _elapsed_ms(start), False, {"error": "missing node"})
 
     estimate = heuristic or (lambda _: 0.0)
-    g_score = {node: math.inf for node in graph.nodes()}
+    g_score = {node: math.inf for node in graph.iter_nodes()}
     previous: dict[int, int] = {}
     g_score[source] = 0.0
     queue: list[tuple[float, float, int]] = [(estimate(source), 0.0, source)]
     expanded = 0
+    edge_examinations = 0
 
     while queue:
         _, current_cost, node = heapq.heappop(queue)
@@ -153,6 +166,7 @@ def astar(
         if node == target:
             break
         for edge in graph.neighbors(node):
+            edge_examinations += 1
             candidate = current_cost + edge.weight
             if candidate < g_score[edge.to]:
                 previous[edge.to] = node
@@ -160,7 +174,14 @@ def astar(
                 heapq.heappush(queue, (candidate + estimate(edge.to), candidate, edge.to))
 
     path = _reconstruct_path(previous, source, target)
-    return AlgorithmResult("astar", path, g_score[target], _elapsed_ms(start), bool(path), {"expanded_nodes": expanded})
+    return AlgorithmResult(
+        "astar",
+        path,
+        g_score[target],
+        _elapsed_ms(start),
+        bool(path),
+        {"expanded_nodes": expanded, "edge_examinations": edge_examinations},
+    )
 
 
 def harmony_search(
@@ -189,19 +210,24 @@ def harmony_search(
         return AlgorithmResult("harmony_search", [], math.inf, _elapsed_ms(start), False, {"error": "missing node"})
 
     rng = random.Random(seed)
-    memory = [_random_valid_path(graph, source, target, rng) for _ in range(hms)]
-    memory = [path for path in memory if path]
-    if not memory:
+    initial = [_random_valid_path(graph, source, target, rng) for _ in range(hms)]
+    initial = [path for path in initial if path]
+    if not initial:
         fallback = _unweighted_path(graph, source, target)
         if fallback:
-            memory.append(fallback)
-    if not memory:
+            initial.append(fallback)
+    if not initial:
         return AlgorithmResult("harmony_search", [], math.inf, _elapsed_ms(start), False, {"error": "no valid path"})
 
-    memory.sort(key=graph.path_cost)
-    convergence = [graph.path_cost(memory[0])]
-    node_count = len(graph.nodes())
-    successor_map = _memory_successor_map(memory)
+    # Harmony memory stores (cost, path) pairs so a path is scored exactly once.
+    # Re-deriving cost inside the sort key would re-score every harmony on every
+    # improvement, which is bookkeeping cost rather than search cost.
+    memory: list[tuple[float, list[int]]] = [(graph.path_cost(path), path) for path in initial]
+    memory.sort(key=lambda item: item[0])
+    path_evaluations = len(memory)
+    convergence = [memory[0][0]]
+    node_count = graph.node_count()
+    successor_map = _memory_successor_map([path for _, path in memory])
 
     for _ in range(iterations):
         candidate = _improvise_path(graph, source, target, successor_map, node_count, hmcr, par, rng)
@@ -212,17 +238,19 @@ def harmony_search(
         if not candidate:
             convergence.append(convergence[-1])
             continue
-        if graph.path_cost(candidate) < graph.path_cost(memory[-1]):
-            memory[-1] = candidate
-            memory.sort(key=graph.path_cost)
-            successor_map = _memory_successor_map(memory)
-        convergence.append(graph.path_cost(memory[0]))
+        candidate_cost = graph.path_cost(candidate)
+        path_evaluations += 1
+        if candidate_cost < memory[-1][0]:
+            memory[-1] = (candidate_cost, candidate)
+            memory.sort(key=lambda item: item[0])
+            successor_map = _memory_successor_map([path for _, path in memory])
+        convergence.append(memory[0][0])
 
-    best = memory[0]
+    best_cost, best = memory[0]
     return AlgorithmResult(
         "harmony_search",
         best,
-        graph.path_cost(best),
+        best_cost,
         _elapsed_ms(start),
         True,
         {
@@ -232,6 +260,7 @@ def harmony_search(
             "iterations": iterations,
             "seed": seed,
             "convergence": convergence,
+            "path_evaluations": path_evaluations,
         },
     )
 
@@ -243,7 +272,7 @@ def _random_valid_path(
     rng: random.Random,
     max_attempts: int = 12,
 ) -> list[int]:
-    max_steps = max(2, len(graph.nodes()))
+    max_steps = max(2, graph.node_count())
     for _ in range(max_attempts):
         path = [source]
         visited = {source}

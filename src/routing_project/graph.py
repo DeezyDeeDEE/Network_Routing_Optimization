@@ -27,10 +27,17 @@ class WeightedGraph:
     def __init__(self, directed: bool = False) -> None:
         self.directed = directed
         self._adjacency: dict[int, list[Edge]] = {}
+        # Parallel weight index so edge_weight/has_edge/path_cost are O(1) dict
+        # lookups instead of linear scans over the adjacency list. Without this,
+        # Harmony Search spends most of its runtime re-scanning adjacency lists
+        # to score candidate paths, which inflates its measured cost relative to
+        # the classical algorithms and makes the comparison unfair.
+        self._weights: dict[int, dict[int, float]] = {}
         self.coordinates: dict[int, tuple[float, float]] = {}
 
     def add_node(self, node: int, coordinate: tuple[float, float] | None = None) -> None:
         self._adjacency.setdefault(node, [])
+        self._weights.setdefault(node, {})
         if coordinate is not None:
             self.coordinates[node] = coordinate
 
@@ -43,14 +50,31 @@ class WeightedGraph:
 
     def _replace_or_append(self, source: int, target: int, weight: float) -> None:
         edges = self._adjacency[source]
-        for index, edge in enumerate(edges):
-            if edge.to == target:
-                edges[index] = Edge(target, weight)
-                return
-        edges.append(Edge(target, weight))
+        if target in self._weights[source]:
+            for index, edge in enumerate(edges):
+                if edge.to == target:
+                    edges[index] = Edge(target, weight)
+                    break
+        else:
+            edges.append(Edge(target, weight))
+        self._weights[source][target] = weight
 
     def nodes(self) -> list[int]:
+        """Return nodes in sorted order.
+
+        Prefer :meth:`iter_nodes` or :meth:`node_count` on large graphs; this
+        sorts on every call.
+        """
+
         return sorted(self._adjacency)
+
+    def iter_nodes(self):
+        """Iterate nodes in insertion order without sorting."""
+
+        return iter(self._adjacency)
+
+    def node_count(self) -> int:
+        return len(self._adjacency)
 
     def neighbors(self, node: int) -> list[Edge]:
         return list(self._adjacency.get(node, []))
@@ -59,13 +83,13 @@ class WeightedGraph:
         return node in self._adjacency
 
     def has_edge(self, source: int, target: int) -> bool:
-        return any(edge.to == target for edge in self._adjacency.get(source, []))
+        return target in self._weights.get(source, ())
 
     def edge_weight(self, source: int, target: int) -> float:
-        for edge in self._adjacency.get(source, []):
-            if edge.to == target:
-                return edge.weight
-        raise KeyError(f"No edge from {source} to {target}.")
+        try:
+            return self._weights[source][target]
+        except KeyError as exc:
+            raise KeyError(f"No edge from {source} to {target}.") from exc
 
     def edge_count(self) -> int:
         count = sum(len(edges) for edges in self._adjacency.values())
@@ -87,7 +111,8 @@ class WeightedGraph:
         nodes = list(path)
         if len(nodes) < 2:
             return 0.0
-        return sum(self.edge_weight(nodes[index], nodes[index + 1]) for index in range(len(nodes) - 1))
+        weights = self._weights
+        return sum(weights[nodes[index]][nodes[index + 1]] for index in range(len(nodes) - 1))
 
 
 def density_to_probability(density: str) -> float:

@@ -10,5 +10,14 @@ dist/
 *.egg-info/
 results/raw/*.csv
 !results/raw/small_experiment.csv
+!results/raw/real_experiment.csv
+!results/raw/checkpoint_experiment.csv
 !results/raw/.gitkeep
 !results/charts/.gitkeep
+
+# Downloaded SNAP datasets are large and reproducible via `cli.py run-real`.
+data/
+
+# Scratch output from GUI runs; the committed report charts live one level up.
+results/charts/gui/
+results/raw/gui_*.csv
