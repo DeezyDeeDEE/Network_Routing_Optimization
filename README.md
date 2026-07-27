@@ -10,20 +10,17 @@ be comparing the efficiency between C++ algorithms and Python algorithms as well
 - Alan Tate(https://github.com/Reaper51322) - C++ Collaborator
 
 ## Structure
-- `/Python Folder/Aaron Files/`: Code from Aaron and his graphs, results, and his implementation of the algorithm's
-- `/Python Folder/Derek Code/`: Code from Derek and his graphs, results, tests, and algorithm implementations
-- `/C++ Folder/`: Contains seperate folders for Alan's algorithms
-- `/C++ Folder/A search/`: Contains files from A search implementation including code, graphs, reports, and tests
-- `/C++ Folder/Harmoncy search/`:Contains Harmony search implementation files including code, graphs, reports, and tests
-- `/C++ Folder/bellman_ford/`: Contains Bellman-Ford implementation files including code, graphs, reports, and tests
-- `/C++ Folder/dijkstra_project/`: Contains Dijkstra'simplementation files including code, graphs, reports, and tests
+- `/Code/Python Folder/`: code that contains the implementations of Derek and Aaron
+- `/Code/C++ Folder/`: Code that contains the implementation of the algorithms from Alan
+- `/Reports/`: Contains the reports of the implementations of Alan and Derek's Code
+- `/Graphs/`: Contains the graphs of Aaron's, Alan's, and Derek's implementations.
 
 # How To Run Code For Each Implementation
 ## Derek Implementation
 ### Setup
-- Navigate to `/Python Folder/Derek Code/`
+- Navigate to `/Code/Python/Derek Implementation/`
 
-Run code for setup
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -31,11 +28,15 @@ python -m pip install -e .
 python -m pip install -r requirements-dev.txt
 ```
 
-If you have not created a python environment, run the commands with `PYTHONPATH=src`.
+If you do not create a virtual environment, run commands with `PYTHONPATH=src`.
 On PowerShell:
+
 ```powershell
 $env:PYTHONPATH = "src"
 ```
+
+## Run Tests
+
 Preferred:
 
 ```powershell
@@ -48,7 +49,43 @@ Fallback using only the Python standard library:
 python -m unittest discover
 ```
 
-### Run Experiments
+## Analysis Notebook
+
+`analysis.ipynb` walks through the whole study in 19 documented code cells:
+each algorithm in turn, the scaling experiment, the real SNAP networks, memory
+and basic-operation counts, and the Harmony Search parameter sweep. It is
+committed **with all outputs saved**, so GitHub renders the tables and the six
+figures without anyone running it.
+
+```powershell
+python -m pip install -r requirements-dev.txt
+jupyter notebook analysis.ipynb
+```
+
+## Interactive GUI
+
+The fastest way to see the project work is the built-in web GUI:
+
+```powershell
+python -m routing_project.cli gui
+```
+
+This starts a local server (default <http://127.0.0.1:8000>) and opens a browser.
+From there you can pick an experiment, adjust its parameters, press **Run**, and
+watch results stream in live: a progress bar, a running log, stat tiles, and four
+charts (runtime, path cost, Harmony Search gap above optimal, peak memory) that
+redraw as each run finishes. When the experiment ends, the report-quality SVG
+charts are generated and shown at the bottom of the page.
+
+Options: `--port 0` picks a free port, `--host 0.0.0.0` exposes it on the
+network, `--no-browser` skips opening a browser.
+
+The GUI uses only the Python standard library (`http.server` plus server-sent
+events), so it adds no dependencies. Only one experiment runs at a time — these
+measurements are wall-clock timings, and two experiments sharing the CPU would
+contaminate each other's results.
+
+## Run Experiments
 
 Quick checkpoint run:
 
@@ -62,7 +99,7 @@ Harmony Search parameter sweep:
 python -m routing_project.cli run-sweep
 ```
 
-- The default sweep tests all HMCR/PAR/HMS combinations at 500 nodes with 3
+The default sweep tests all HMCR/PAR/HMS combinations at 500 nodes with 3
 trials and 100 iterations per trial. For a larger final-analysis run:
 
 ```powershell
@@ -75,30 +112,25 @@ Larger checkpoint grid:
 python -m routing_project.cli run-checkpoint
 ```
 
-- Generate charts from the small run:
 
 ```powershell
-python -m routing_project.cli make-charts
+python -m routing_project.cli list-datasets
+python -m routing_project.cli run-real
+python -m routing_project.cli run-real --datasets facebook oregon1 --sample 5000
 ```
 
-This writes SVG chart files and `results/charts/results_summary.md`, which
-summarizes the fastest algorithm, lowest path-cost algorithm, Harmony Search's
-average gap from Dijkstra, and the main interpretation points for the report.
+Files download once into `data/` and are cached. Two modelling decisions matter
+for the report:
 
-### Result Files
 
-- CSV outputs use these fields:
+## Charts
 
-`algorithm`, `graph_id`, `nodes`, `edges`, `density`, `source`, `target`,
-`path_cost`, `runtime_ms`, `success`, `seed`, `hmcr`, `par`, `hms`,
-`iterations`.
-
-The SVG chart outputs summarize mean runtime, mean path cost, and Harmony Search
-cost difference relative to Dijkstra. These files can be inserted into the final
-report or presentation.
-
+```powershell
+python -m routing_project.cli make-charts --input results/raw/checkpoint_experiment.csv --output-dir results/charts
+python -m routing_project.cli make-charts --input results/raw/real_experiment.csv --output-dir results/charts/real
+```
 ## Aaron Implementation
-- Navigate to `/Python Folder/Aaron Files/`
+- Navigate to `/Code/Python/Aaron Implementation/`
 To run, simply input the following
 ```powershell
 ./mainscript.sh
@@ -110,7 +142,7 @@ To put the results in a file and graph them, input the following
 python3 graph.py
 ```
 ## Alan Implementation
-- Navigate to `/C++ Folder/`
+- Navigate to `/Code/C++ Code/`
 ### Dijkstra's Algorithm
 - Navigate to `/C++ Folder/dijkstra_project/`
 The file must be unzipped first. Use `as-skitter.txt`, not `as-skitter.txt.gz`.
