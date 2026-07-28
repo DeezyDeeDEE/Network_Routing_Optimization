@@ -13,7 +13,7 @@ be comparing the efficiency between C++ algorithms and Python algorithms as well
 - `/Code/Python Folder/`: code that contains the implementations of Derek and Aaron
 - `/Code/C++ Folder/`: Code that contains the implementation of the algorithms from Alan
 - `/Reports/`: Contains the reports of the implementations of Alan and Derek's Code
-- `/Results/': These are the results of our work
+- `/Results/`: These are the results of our work
 - `/Datasets/`: These are the datasets that we use for our code
 - `/Tables & Graphs/`: Contains the graphs of Aaron's, Alan's, and Derek's implementations.
 
