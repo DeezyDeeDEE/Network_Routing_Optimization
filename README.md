@@ -133,14 +133,9 @@ python -m routing_project.cli make-charts --input results/raw/real_experiment.cs
 - Navigate to `/Code/Python/Aaron Implementation/`
 To run, simply input the following
 ```powershell
-./mainscript.sh
+./transcript.sh
 ```
-To put the results in a file and graph them, input the following
-```powershell
-./mainscript.sh
-./mainscript.sh > results.csv
-python3 graph.py
-```
+
 ## Alan Implementation
 - Navigate to `/Code/C++ Code/`
 ## Commands to Run
