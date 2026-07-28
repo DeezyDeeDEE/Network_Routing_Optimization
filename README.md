@@ -133,7 +133,7 @@ python -m routing_project.cli make-charts --input results/raw/real_experiment.cs
 - Navigate to `/Code/Python/Aaron Implementation/`
 To run, simply input the following
 ```powershell
-./transcript.sh
+./topscript.sh
 ```
 
 ## Alan Implementation
