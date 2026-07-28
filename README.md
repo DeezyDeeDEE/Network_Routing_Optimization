@@ -143,91 +143,10 @@ python3 graph.py
 ```
 ## Alan Implementation
 - Navigate to `/Code/C++ Code/`
-### Dijkstra's Algorithm
-- Navigate to `/C++ Folder/dijkstra_project/`
-The file must be unzipped first. Use `as-skitter.txt`, not `as-skitter.txt.gz`.
-
-#### Compile in VS Code terminal
-
-```powershell
-g++ main.cpp -o dijkstra -std=c++17
-```
-
-Or use Make:
-
-```powershell
-make
-```
-
-#### Run a smaller test
-
-```powershell
-.\dijkstra.exe as-skitter.txt 0 100000
-```
-
-#### Run the full dataset
-
-```powershell
-.\dijkstra.exe as-skitter.txt 0 0
-```
-
-#### Optional target node
-
-By default, the program finds the path from the source node to the largest node ID loaded. You can also provide a target node manually:
-
-```powershell
-.\dijkstra.exe as-skitter.txt 0 0 1696415
-```
-
-#### Output files
-
-The program creates:
-
-- `results.csv`
-- `runtime_graph.svg`
-- `path_length_graph.svg`
-
-### A* Search Algorithm
-- Navigate to `/C++ Folder/A search/
-
-Compile:
-```powershell
-g++ main.cpp -o astar -std=c++17 -O2
-```
-
-Run:
-```powershell
-.\astar.exe as-skitter.txt 0 0
-```
-
-This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
-
-### Bellman-Ford Algorithm
-- Navigate to `/C++ Folder/bellman_ford/`
-Compile:
-```powershell
-g++ main.cpp -o bellman_ford -std=c++17 -O2
-```
-
-Run:
-```powershell
-.\bellman_ford.exe as-skitter.txt 0 10000
-```
-
-This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
-
-### Harmony Search
-- Navigate to `/C++ Folder/Harmoncy search/
-Compile:
-```powershell
-g++ main.cpp -o harmony_search -std=c++17 -O2
-```
-
-Run:
-```powershell
-.\harmony_search.exe as-skitter.txt 0 100000 5000 50
-```
-
-Arguments: dataset source maxEdges iterations harmonyMemorySize.
-
-This creates `results.csv`, `runtime_graph.svg`, and `path_length_graph.svg`.
+## Commands to Run
+.\routing_benchmark.exe Datasets Results  ,   .\run_all.ps1
+ 
+g++ Code\benchmark_main.cpp Code\dijkstra.cpp Code\bellman_ford.cpp Code\astar.cpp Code\harmony_search.cpp -o routing_benchmark.exe -std=c++17 -O2
+ 
+.\routing.exe dijkstra Datasets\graph_4096.txt 1 2500
+ 
