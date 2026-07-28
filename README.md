@@ -17,6 +17,9 @@ be comparing the efficiency between C++ algorithms and Python algorithms as well
 - `/Datasets/`: These are the datasets that we use for our code
 - `/Tables & Graphs/`: Contains the graphs of Aaron's, Alan's, and Derek's implementations.
 
+## AI Disclaimer
+AI is used in this project to help give us generalized structures of how our project should look. We use it to help structure our report only to a small degree and our code while filling in the structure with our code. We also used it to help us fit the data into the code, as well as how to structure our graphs.  
+
 # How To Run Code For Each Implementation
 ## Derek Implementation
 ### Setup
